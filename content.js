@@ -26,6 +26,7 @@
   a { color: #ee4d2d; text-decoration: none; }
   .del { background: #999; padding: 4px 8px; font-size: 12px; box-shadow: none; }
   input.aff { width: 100%; min-width: 200px; padding: 6px 8px; font-size: 13px; border: 1px solid #ccc; border-radius: 4px; }
+  input.price { width: 90px; padding: 6px 8px; font-size: 13px; border: 1px solid #ccc; border-radius: 4px; }
   .empty { padding: 24px; text-align: center; color: #888; }
 </style>
 <div class="bar">
@@ -70,13 +71,14 @@
     const items = (await Store.list()).sort((a, b) => b.updatedAt - a.updatedAt);
     $('count').textContent = `Danh sách sản phẩm (${items.length})`;
     $('tbody').innerHTML = items.length
-      ? `<table><thead><tr><th>Ảnh</th><th>ID</th><th>Tên</th><th>Category</th><th>Đã bán</th><th>Affiliate link</th><th></th></tr></thead><tbody>${items
+      ? `<table><thead><tr><th>Ảnh</th><th>ID</th><th>Tên</th><th>Category</th><th>Giá</th><th>Đã bán</th><th>Affiliate link</th><th></th></tr></thead><tbody>${items
           .map(
             (p) => `<tr>
 <td><img src="${esc(p.image)}" alt=""></td>
 <td>${esc(p.id)}</td>
 <td><a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.name)}</a></td>
 <td>${esc(p.category)}</td>
+<td><input class="price" type="text" data-price="${esc(p.id)}" value="${esc(p.price || '')}" placeholder="Giá"></td>
 <td>${esc(p.soldText || p.sold)}</td>
 <td><input class="aff" type="url" data-aff="${esc(p.id)}" value="${esc(p.affiliate_url || '')}" placeholder="https://..."></td>
 <td><button class="del" data-id="${esc(p.id)}">Xoá</button></td></tr>`
@@ -126,6 +128,11 @@
   };
   $('tbody').onchange = async (e) => {
     const input = e.target;
+    const pid = input.dataset && input.dataset.price;
+    if (pid) {
+      await Store.update(pid, { price: input.value.trim() });
+      return toast('Đã lưu giá.');
+    }
     const id = input.dataset && input.dataset.aff;
     if (!id) return;
     const v = input.value.trim();
