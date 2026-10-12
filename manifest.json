@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Shopee Product Saver",
+  "version": "1.0.0",
+  "description": "Lưu thông tin sản phẩm Shopee vào bộ nhớ local và export CSV/JSON.",
+  "permissions": ["storage"],
+  "icons": { "16": "icons/16.png", "48": "icons/48.png", "128": "icons/128.png" },
+  "content_scripts": [
+    {
+      "matches": ["*://shopee.vn/*", "*://*.shopee.vn/*", "*://shopee.com/*", "*://*.shopee.com/*", "*://shopee.co.id/*", "*://shopee.sg/*", "*://shopee.ph/*", "*://shopee.com.my/*", "*://shopee.co.th/*", "*://shopee.tw/*"],
+      "js": ["storage.js", "scraper.js", "content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
